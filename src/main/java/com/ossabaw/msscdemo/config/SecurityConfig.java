@@ -18,6 +18,8 @@ public class SecurityConfig {
     @Order(1)
     SecurityFilterChain apiSecurityFilterChain(HttpSecurity http) throws Exception {
 
+
+        /* simplest way to implement security is by formLogin or httpbasic defaults*/
         return http
                 .securityMatcher("/api/**")
                 .authorizeHttpRequests(auth-> auth.anyRequest().authenticated())
@@ -40,6 +42,19 @@ public class SecurityConfig {
                 .headers(headers -> headers.frameOptions(head -> {
                     head.disable();
                 }))
+                .build();
+    }
+
+    @Bean
+    @Order(3)
+    SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+        return http
+                .authorizeHttpRequests(auth ->{
+                    auth.requestMatchers("/").permitAll();
+                    auth.requestMatchers("/error").permitAll();
+                    auth.anyRequest().authenticated();
+                })
+                .formLogin(Customizer.withDefaults())
                 .build();
     }
 }
